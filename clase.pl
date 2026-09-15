@@ -67,3 +67,35 @@ mismo_objeto(P1, P2, Obj) :-
     inventario(P2, Lista2),
     member(Obj, Lista1),
     member(Obj, Lista2).
+
+ser(presente, tercera, singular, "es").
+ser(pasado, tercero, singular, "fue").
+conjugar_accion(Verbo, Tiempo, Persona, Numero, C):-
+    ( Verbo = "ser" -> 
+        ser(Tiempo, Persona, Numero, C)
+    ; C = Verbo ).
+
+% 1. Verificacion de nivel (operador relacional >=)
+puede_aceptar(Personaje, ID_Mision) :-
+    personaje(Personaje, Nivel, _),
+    mision(ID_Mision, _, Dificultad, _),
+    Nivel >= Dificultad.
+% 2. ¿Tiene el objeto que la mision requiere) (member/2)
+tiene_requerido(Personaje, Objeto) :-
+    inventario(Personaje, Lista),
+    member(Objeto, Lista).
+
+%1. Fusionar inventarios de dos personajes con append/3
+fusionar_equipo(P1, P2, EquipoFusionado) :-
+    inventario(P1, L1), inventario(P2, L2),
+    append(L1, L2, EquipoFusionado).
+
+%2. Reporte narrativo combinado todo lo anterior
+generar_reporte(Personaje, MisionID, Mensaje) :-
+    puede_aceptar(Personaje, MisionID),
+    mision(MisionID, Nombre, _, XP),
+    conjugar_accion("ser", presente, tercera, singular, F),t
+    atomic_list_concat(
+        [Personaje, F, 'capaz de completar', Nombre, 'por', XP, 'XP'],
+        ' ', Mensaje).
+
